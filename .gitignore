@@ -1,0 +1,30 @@
+# Ignore Python Bytecode files
+*.pyc
+__pycache__/
+
+# Ignore virtual environments (if applicable)
+venv/
+bdia-env-pdf/
+**/fastenv/
+**/strenv/
+
+# Ignore .env file (for sensitive credentials)
+*.env
+
+# Ignore log files
+logs/
+
+# Ignore PostgreSQL data (if you don't want to commit database data)
+pgdata/
+
+# Ignore Airflow compiled logs and temp files
+*.log
+*.out
+*.pid
+
+# Ignore Docker-related files if necessary
+docker-compose.override.yml
+Dockerfile
+
+# Ignore CSV test files (if these are temporary/generated files)
+*.csv

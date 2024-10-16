@@ -1,0 +1,26 @@
+services:
+  fastapi:
+    image: my-fastapi-app
+    container_name: fastapi-container
+    build:
+      context: ./fastapi # Path to your FastAPI Dockerfile directory
+    ports:
+      - "8000:8000"
+    networks:
+      - my-network
+
+  streamlit:
+    image: my-streamlit-app
+    container_name: streamlit-container
+    build:
+      context: ./Streamlit # Path to your Streamlit Dockerfile directory
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env  # Make sure the .env file is in the same folder as docker-compose.yml
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

@@ -1,0 +1,14 @@
+fastapi
+python-dotenv
+psycopg2-binary
+passlib
+PyJWT
+boto3
+fastapi-jwt-auth
+uvicorn
+pydantic==1.10.16  
+mysql-connector-python
+python-dotenv
+python-jose==3.3.0
+openai
+requests

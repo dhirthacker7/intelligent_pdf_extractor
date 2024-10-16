@@ -1,0 +1,90 @@
+services:
+  airflow-webserver:
+    image: my_airflow_with_pypdf2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+      - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}  # AWS access key from .env or environment variables
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}  # AWS secret key from .env or environment variables
+      - DISCOVERY_API_KEY=${DISCOVERY_API_KEY}
+      - DISCOVERY_URL=${DISCOVERY_URL}
+      - DISCOVERY_PROJECT_ID=${DISCOVERY_PROJECT_ID}
+      - DISCOVERY_COLLECTION_ID=${DISCOVERY_COLLECTION_ID}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    command: webserver
+
+  airflow-scheduler:
+    image: my_airflow_with_pypdf2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - DISCOVERY_API_KEY=${DISCOVERY_API_KEY}
+      - DISCOVERY_URL=${DISCOVERY_URL}
+      - DISCOVERY_PROJECT_ID=${DISCOVERY_PROJECT_ID}
+      - DISCOVERY_COLLECTION_ID=${DISCOVERY_COLLECTION_ID}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    depends_on:
+      - postgres
+      - redis
+    command: scheduler
+
+  airflow-worker:
+    image: my_airflow_with_pypdf2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+      - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - DISCOVERY_API_KEY=${DISCOVERY_API_KEY}
+      - DISCOVERY_URL=${DISCOVERY_URL}
+      - DISCOVERY_PROJECT_ID=${DISCOVERY_PROJECT_ID}
+      - DISCOVERY_COLLECTION_ID=${DISCOVERY_COLLECTION_ID}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    depends_on:
+      - redis
+      - postgres
+    command: celery worker
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+    container_name: airflow-redis
+    ports:
+      - "6379:6379"

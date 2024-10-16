@@ -1,0 +1,16 @@
+boto3
+datasets
+huggingface_hub
+pandas
+fastapi
+python-dotenv
+psycopg2-binary
+passlib
+PyJWT
+fastapi-jwt-auth
+uvicorn
+pydantic==1.10.16 
+python-jose==3.3.0
+fastapi-cors
+
+
